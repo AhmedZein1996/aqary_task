@@ -52,7 +52,7 @@ void main() {
       () async {
         sut.add(event);
         verify(() => mockGithubTrendingRepository.getTrendingRepo()).called(1);
-        expect(sut.repos.length, 1);
+        expect(sut.repos.length, 3);
       },
     );
   });
