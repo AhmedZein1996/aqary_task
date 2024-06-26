@@ -6,29 +6,33 @@ import 'package:github_task/features/trending_repos/data/repositories/github_tre
 import 'package:github_task/features/trending_repos/logic/trending_repo/trending_repo_bloc.dart';
 import 'package:mocktail/mocktail.dart';
 
-class MockNewYorkTimesStoriesRepository extends Mock
+class MockGithubTrendingRepository extends Mock
     implements GithubTrendingRepository {}
 
-class MockNewYorkTimesStoriesDatasource extends Mock
+class MockGithubTrendingDatasource extends Mock
     implements BaseGithubTrendingRepoDatasource {}
 
 void main() {
   late TrendingRepoBloc sut;
   late TrendingRepoEvent event;
-  late MockNewYorkTimesStoriesDatasource mockNewYorkTimesStoriesDatasource;
-  late MockNewYorkTimesStoriesRepository mockNewYorkTimesStoriesRepository;
+  late MockGithubTrendingDatasource mockGithubTrendingDatasource;
+  late MockGithubTrendingRepository mockGithubTrendingRepository;
   setUp(() {
-    mockNewYorkTimesStoriesDatasource = MockNewYorkTimesStoriesDatasource();
-    mockNewYorkTimesStoriesRepository = MockNewYorkTimesStoriesRepository();
+    mockGithubTrendingDatasource = MockGithubTrendingDatasource();
+    mockGithubTrendingRepository = MockGithubTrendingRepository();
     event = GetTrendingRepoEvent();
-    sut = TrendingRepoBloc(mockNewYorkTimesStoriesRepository);
+    sut = TrendingRepoBloc(mockGithubTrendingRepository);
   });
   final List<TrendingRepoModel> testRepos = [
     const TrendingRepoModel('trending 1', 'description 1',
-        {'__typename': 'Language', 'name': 'Shell'})
+        {'__typename': 'Language', 'name': 'Shell'}),
+    const TrendingRepoModel('trending 2', 'description 2',
+        {'__typename': 'Language', 'name': 'Python'}),
+    const TrendingRepoModel(
+        'trending 3', 'description 3', {'__typename': 'Language', 'name': 'C'}),
   ];
-  void arrangeNewYorkTimesStoriesRepositoryReturns3Stories() {
-    when(() => mockNewYorkTimesStoriesRepository.getTrendingRepo())
+  void arrangeTrendingRepositoryReturns3Reps() {
+    when(() => mockGithubTrendingRepository.getTrendingRepo())
         .thenAnswer((_) async => Right(testRepos));
   }
 
@@ -46,10 +50,8 @@ void main() {
     test(
       'gets trending repos',
       () async {
-        arrangeNewYorkTimesStoriesRepositoryReturns3Stories();
         sut.add(event);
-        verify(() => mockNewYorkTimesStoriesRepository.getTrendingRepo())
-            .called(1);
+        verify(() => mockGithubTrendingRepository.getTrendingRepo()).called(1);
         expect(sut.repos.length, 1);
       },
     );
